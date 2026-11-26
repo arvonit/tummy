@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  Tummy
 //
-//  Created by Arvind on 6/11/26.
+//  Created by Arvind on 11/5/26.
 //
 
 import UIKit
@@ -11,7 +11,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        view.backgroundColor = .systemBackground
     }
 
 
