@@ -218,3 +218,7 @@ The comparison flow, adding places, the detail screen, persistence, and networki
   action, which Xcode's auto-generated schemes don't have.
 - The hosted chips need `safeAreaRegions = []`. Otherwise they respect the safe area they add
   themselves, push their content down, and grow in a loop.
+- The hard top edge effect could stay on after scrolling back to the top, which blurred the
+  large title. `scrollViewDidScroll` now hides the effect whenever the list rests at its top.
+- When the list is pulled down past its top, the large title moves down with it but the chips
+  (pinned by the safe area) don't. `scrollViewDidScroll` shifts the chips by the pull distance.

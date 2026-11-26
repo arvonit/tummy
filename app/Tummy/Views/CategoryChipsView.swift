@@ -45,7 +45,7 @@ struct CategoryChipsView: View {
                 .glassEffect(
                     // A see-through tint keeps the selected chip glassy instead of solid blue
                     isSelected
-                        ? .regular.tint(.accentColor.opacity(0.5)).interactive()
+                        ? .regular.tint(.accentColor.opacity(0.75)).interactive()
                         : .regular.interactive(),
                     in: .capsule
                 )

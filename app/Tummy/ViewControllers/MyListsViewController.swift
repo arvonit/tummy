@@ -8,7 +8,7 @@
 import SwiftUI
 import UIKit
 
-class MyListsViewController: UIViewController {
+class MyListsViewController: UIViewController, UICollectionViewDelegate {
 
     let store: RankingStore
 
@@ -84,6 +84,7 @@ class MyListsViewController: UIViewController {
     func configCollectionView() {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeListLayout())
         collectionView.allowsSelection = false
+        collectionView.delegate = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         // Behind the chips, so rows scroll underneath the glass. Being the first subview also
         // lets the large title collapse as the list scrolls.
@@ -178,6 +179,20 @@ class MyListsViewController: UIViewController {
             .filter { selectedCategory == nil || $0.category == selectedCategory }
             .enumerated()
             .map { index, ranking in RankingRow(rank: index + 1, ranking: ranking) }
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // How far the list is pulled down past its top (negative while scrolled into the list)
+        let topOffset = -collectionView.adjustedContentInset.top
+        let pullDistance = topOffset - collectionView.contentOffset.y
+
+        // Hide the bar's edge effect while the list rests at its top. Without this, the effect
+        // can stay on after scrolling back up and blur the large title.
+        collectionView.topEdgeEffect.isHidden = pullDistance >= 0
+
+        // The large title moves down with the list when it's pulled past the top, so move the
+        // chips by the same amount to keep them under the title
+        categoryChips.view.transform = CGAffineTransform(translationX: 0, y: max(0, pullDistance))
     }
 
 }
