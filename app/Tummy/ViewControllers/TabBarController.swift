@@ -17,9 +17,15 @@ class TabBarController: UITabBarController {
             title: "Feed",
             imageName: "list.bullet.rectangle"
         )
-        let myLists = makeTab(MyListsViewController(), title: "My Lists", imageName: "list.number")
+        // One store, so rankings changed in one tab show up in the other
+        let rankingStore = SampleRankingStore()
+        let myLists = makeTab(
+            MyListsViewController(store: rankingStore),
+            title: "My Lists",
+            imageName: "list.number"
+        )
         let search = makeTab(
-            PlaceholderViewController(title: "Search"),
+            SearchViewController(rankingStore: rankingStore),
             title: "Search",
             imageName: "map"
         )
@@ -30,8 +36,8 @@ class TabBarController: UITabBarController {
         )
 
         viewControllers = [feed, myLists, search, profile]
-        // Start on My Lists while it's the screen under development
-        selectedViewController = myLists
+        // Start on Search while it's the screen under development
+        selectedViewController = search
     }
 
     func makeTab(

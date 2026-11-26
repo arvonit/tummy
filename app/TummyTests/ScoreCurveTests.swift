@@ -120,7 +120,15 @@ struct ScoreCurveTests {
         position: Int,
         category: PlaceCategory = .restaurant
     ) -> Ranking {
-        let restaurant = Restaurant(id: UUID(), name: name, cuisine: "", neighborhood: "")
+        let restaurant = Restaurant(
+            id: UUID(),
+            mapItemID: "",
+            name: name,
+            cuisine: "",
+            neighborhood: "",
+            latitude: 0,
+            longitude: 0
+        )
         return Ranking(
             id: UUID(),
             restaurant: restaurant,

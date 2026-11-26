@@ -18,10 +18,12 @@ The app is built one UI component at a time against static sample data, so each 
 debugged in isolation before any backend exists.
 
 1. **My Lists + score engine** — [plans/01-my-list.md](plans/01-my-list.md)
-2. Comparison flow (binary insertion)
-3. Rate modal (bucket pick → compare → notes, dishes, photos)
-4. Search tab (full-screen map and results sheet)
-5. Restaurant detail
+2. **Search tab (full-screen map) + a minimal Restaurant detail screen** —
+   [plans/02-search-map.md](plans/02-search-map.md). Built before the rate flow, so the map can
+   start it.
+3. Comparison flow (binary insertion)
+4. Rate modal (bucket pick → compare → notes, dishes, photos)
+5. Restaurant detail (the rest: photos, all scores, and ratings breakdown)
 6. Feed
 7. Profile
 8. Supabase backend (auth, Postgres, storage) replaces the sample repositories

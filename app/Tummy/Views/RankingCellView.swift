@@ -53,9 +53,12 @@ struct RankingCellView: View {
 #Preview("Long name, XXL text") {
     let restaurant = Restaurant(
         id: UUID(),
+        mapItemID: "",
         name: "The Extremely Long Named Neighborhood Trattoria and Wine Bar",
         cuisine: "Italian",
-        neighborhood: "Carroll Gardens"
+        neighborhood: "Carroll Gardens",
+        latitude: 0,
+        longitude: 0
     )
     let ranking = Ranking(
         id: UUID(),

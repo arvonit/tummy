@@ -29,6 +29,11 @@ nonisolated enum ScoreCurve {
         }
     }
 
+    /// The bucket whose range holds `score`, for scores that don't come from your own ranking
+    static func bucket(for score: Double) -> Bucket {
+        Bucket.allCases.first { score >= parameters(for: $0).lowerBound } ?? .dislike
+    }
+
     /// Score for the place at `position` (0 = worst) in a bucket holding `count` places
     static func score(position: Int, count: Int, bucket: Bucket) -> Double {
         let curve = parameters(for: bucket)

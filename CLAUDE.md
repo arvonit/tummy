@@ -23,6 +23,8 @@ iOS social app for ranking restaurants with bell-curve scores. Monorepo:
   chosen, why, and whether it came from grill-me, review, or building). Record feature-specific
   decisions and the user's later changes there. Only major architectural or app-wide decisions
   go in `docs/decisions.md`. When either changes, also update the relevant doc.
+- Each plan in `docs/plans/` is built on its own `feature/<name>` branch, created before any code
+  changes. Branch from the previous feature's branch until it's merged into `main`.
 
 ## Building
 

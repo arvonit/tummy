@@ -13,11 +13,26 @@ enum SampleData {
     /// category's bucket, so positions are assigned in reverse (0 = worst).
     static let rankings = loadRankings()
 
+    /// A made-up average score from all users, until the backend has real ones. It's hashed from
+    /// the Apple ID so it stays the same across launches, and spread on a bell curve around 7.3.
+    static func communityScore(for mapItemID: String) -> Double {
+        // FNV-1a, because Swift's `hashValue` changes on every launch
+        let hash = mapItemID.utf8.reduce(UInt64(14_695_981_039_346_656_037)) { hash, byte in
+            (hash ^ UInt64(byte)) &* 1_099_511_628_211
+        }
+        let percentile = (Double(hash % 10_000) + 0.5) / 10_000
+        let score = 7.3 + 1.1 * ScoreCurve.inverseNormalCDF(percentile)
+        return (min(max(score, 2), 9.8) * 10).rounded() / 10
+    }
+
     private nonisolated struct Entry: Decodable {
         let name: String
         let cuisine: String
         let neighborhood: String
         let category: PlaceCategory
+        let mapItemID: String
+        let latitude: Double
+        let longitude: Double
         let bucket: Bucket
     }
 
@@ -37,9 +52,12 @@ enum SampleData {
                         id: UUID(),
                         restaurant: Restaurant(
                             id: UUID(),
+                            mapItemID: entry.mapItemID,
                             name: entry.name,
                             cuisine: entry.cuisine,
-                            neighborhood: entry.neighborhood
+                            neighborhood: entry.neighborhood,
+                            latitude: entry.latitude,
+                            longitude: entry.longitude
                         ),
                         category: category,
                         bucket: bucket,

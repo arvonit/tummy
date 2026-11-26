@@ -58,6 +58,11 @@ protocol RankingStore {
 - **Soon**: `SupabaseRankingStore` built on `supabase-swift`.
 - **Later**: an implementation that calls our own API in `services/api`, with no screen changes.
 
+Places on the map come from Apple Maps through `PlaceStore`, whose only implementation is
+`MapKitPlaceStore`. A `Place` is keyed by Apple's map item ID, and `Restaurant.mapItemID` links a
+ranking to it. That's the same key as `restaurants.apple_place_id` below. Until the backend has
+real averages, `SampleData.communityScore(for:)` makes up each place's community score.
+
 Offline storage and caching are deferred. When they're added, GRDB (SQLite) is the leading
 candidate because its tables mirror the Postgres schema.
 
