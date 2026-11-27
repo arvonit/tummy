@@ -5,23 +5,16 @@
 //  Created by Arvind on 11/26/26.
 //
 
-import CoreLocation
 import SwiftUI
 import UIKit
 
-/// Hosts the SwiftUI search map, and handles navigation to the Place screen and the rate flow
+/// Hosts the SwiftUI search map, and opens the Place screen and the rate flow from it
 class SearchViewController: UIViewController {
 
-    let placeStore: PlaceStore
-    let rankingStore: RankingStore
-    let locationManager = CLLocationManager()
+    let context: AppContext
 
-    init(
-        placeStore: PlaceStore = MapKitPlaceStore(),
-        rankingStore: RankingStore = SampleRankingStore()
-    ) {
-        self.placeStore = placeStore
-        self.rankingStore = rankingStore
+    init(context: AppContext = AppContext()) {
+        self.context = context
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -47,11 +40,9 @@ class SearchViewController: UIViewController {
 
     func configViewController() {
         let map = UIHostingController(rootView: SearchMapView(
-            placeStore: placeStore,
-            rankingStore: rankingStore,
-            locationManager: locationManager,
-            onOpen: { [weak self] in self?.openPlace($0) },
-            onRank: { [weak self] in self?.rank($0) }
+            context: context,
+            onOpen: { [weak self, context] in self?.showPlace($0.place, context: context) },
+            onRank: { [weak self, context] in self?.presentRateFlow(for: $0, context: context) }
         ))
         map.view.translatesAutoresizingMaskIntoConstraints = false
 
@@ -65,24 +56,6 @@ class SearchViewController: UIViewController {
             map.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             map.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
-    }
-
-    func openPlace(_ summary: PlaceSummary) {
-        let place = UIHostingController(rootView: PlaceView(
-            summary: summary,
-            placeStore: placeStore,
-            userLocation: locationManager.location,
-            onRank: { [weak self] in self?.rank(summary) }
-        ))
-        place.navigationItem.largeTitleDisplayMode = .never
-        navigationController?.pushViewController(place, animated: true)
-    }
-
-    /// Stands in for the rate flow until it's built
-    func rank(_ summary: PlaceSummary) {
-        let rateFlow = PlaceholderViewController(title: "Rate flow")
-        rateFlow.sheetPresentationController?.detents = [.medium(), .large()]
-        present(rateFlow, animated: true)
     }
 
 }

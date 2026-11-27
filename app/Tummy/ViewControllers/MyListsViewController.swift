@@ -10,7 +10,7 @@ import UIKit
 
 class MyListsViewController: UIViewController, UICollectionViewDelegate {
 
-    let store: RankingStore
+    let context: AppContext
 
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Int, Ranking.ID>!
@@ -21,8 +21,8 @@ class MyListsViewController: UIViewController, UICollectionViewDelegate {
     /// nil shows every category
     var selectedCategory: PlaceCategory?
 
-    init(store: RankingStore = SampleRankingStore()) {
-        self.store = store
+    init(context: AppContext = AppContext()) {
+        self.context = context
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -35,7 +35,14 @@ class MyListsViewController: UIViewController, UICollectionViewDelegate {
         configViewController()
         configCollectionView()
         configDataSource()
-        Task { await loadRankings() }
+    }
+
+    /// UIKit calls this before layout and tracks the observable properties it reads, so it runs
+    /// again whenever your rankings change
+    override func updateProperties() {
+        super.updateProperties()
+        scoredRankings = context.myScoredRankings
+        applySnapshot()
     }
 
     override func viewDidLayoutSubviews() {
@@ -83,7 +90,6 @@ class MyListsViewController: UIViewController, UICollectionViewDelegate {
 
     func configCollectionView() {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeListLayout())
-        collectionView.allowsSelection = false
         collectionView.delegate = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         // Behind the chips, so rows scroll underneath the glass. Being the first subview also
@@ -139,23 +145,12 @@ class MyListsViewController: UIViewController, UICollectionViewDelegate {
         return delete
     }
 
-    func loadRankings() async {
-        do {
-            scoredRankings = ScoreCurve.scored(try await store.rankings())
-        } catch {
-            print("Failed to load rankings: \(error)")
-        }
-        applySnapshot()
-    }
-
     func deleteRanking(_ id: Ranking.ID) async {
         do {
-            try await store.delete(id)
+            try await context.rankingStore.delete(id)
         } catch {
             print("Failed to delete ranking: \(error)")
         }
-        // Reload so every remaining place is rescored on the curve
-        await loadRankings()
     }
 
     func applySnapshot() {
@@ -179,6 +174,14 @@ class MyListsViewController: UIViewController, UICollectionViewDelegate {
             .filter { selectedCategory == nil || $0.category == selectedCategory }
             .enumerated()
             .map { index, ranking in RankingRow(rank: index + 1, ranking: ranking) }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        guard let id = dataSource.itemIdentifier(for: indexPath), let row = rowsByID[id] else {
+            return
+        }
+        showPlace(Place(row.ranking.ranking), context: context)
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {

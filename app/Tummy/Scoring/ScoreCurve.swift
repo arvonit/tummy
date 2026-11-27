@@ -49,8 +49,8 @@ nonisolated enum ScoreCurve {
         return curve.mean + curve.standardDeviation * inverseNormalCDF(target)
     }
 
-    /// Scores every ranking and sorts them best first, breaking ties by name. Each bucket in each
-    /// category is scored as its own list.
+    /// Scores every ranking and sorts them best first, breaking ties by name. Each user's bucket in
+    /// each category is scored as its own list.
     static func scored(_ rankings: [Ranking]) -> [ScoredRanking] {
         let counts = Dictionary(grouping: rankings, by: ListKey.init).mapValues(\.count)
 
@@ -73,10 +73,12 @@ nonisolated enum ScoreCurve {
     }
 
     private nonisolated struct ListKey: Hashable {
+        let userID: User.ID
         let category: PlaceCategory
         let bucket: Bucket
 
         init(_ ranking: Ranking) {
+            userID = ranking.userID
             category = ranking.category
             bucket = ranking.bucket
         }

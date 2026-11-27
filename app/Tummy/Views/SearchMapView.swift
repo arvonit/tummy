@@ -11,9 +11,7 @@ import SwiftUI
 /// The Search tab: a full-screen map of food places with a search bar pinned to the bottom.
 /// Selecting a pin swaps the search bar for a card about that place.
 struct SearchMapView: View {
-    let placeStore: PlaceStore
-    let rankingStore: RankingStore
-    let locationManager: CLLocationManager
+    let context: AppContext
     let onOpen: (PlaceSummary) -> Void
     let onRank: (PlaceSummary) -> Void
 
@@ -22,8 +20,6 @@ struct SearchMapView: View {
     @State private var nearbyPlaces: [Place] = []
     /// Places matching the last search, or nil while browsing
     @State private var searchResults: [Place]?
-    @State private var rankedPlaces: [Place] = []
-    @State private var rankingsByPlaceID: [Place.ID: ScoredRanking] = [:]
     @State private var selectedID: Place.ID?
     @State private var query = ""
 
@@ -46,8 +42,8 @@ struct SearchMapView: View {
             MapUserLocationButton()
             MapCompass()
         }
-        .onMapCameraChange(frequency: .onEnd) { context in
-            region = context.region
+        .onMapCameraChange(frequency: .onEnd) { camera in
+            region = camera.region
             Task { await loadNearbyPlaces() }
         }
         .safeAreaInset(edge: .bottom) {
@@ -63,14 +59,13 @@ struct SearchMapView: View {
             }
         }
         .task {
-            locationManager.requestWhenInUseAuthorization()
+            context.locationManager.requestWhenInUseAuthorization()
             // Start on your neighborhood. The system's user-location camera zooms out too far
             // for Apple to return nearby places.
-            if let location = locationManager.location {
+            if let location = context.locationManager.location {
                 region = .neighborhood(around: location.coordinate)
                 position = .region(region)
             }
-            await loadRankings()
             // Setting the first camera doesn't count as a camera change, so load the first places
             await loadNearbyPlaces()
         }
@@ -79,6 +74,12 @@ struct SearchMapView: View {
     /// Search results, or else nearby places plus your ranked places, which Apple's results can
     /// leave out since it returns at most about 50 places
     private var pins: [PlaceSummary] {
+        let myRankings = context.myScoredRankings
+        let rankingsByPlaceID = Dictionary(
+            myRankings.map { ($0.restaurant.mapItemID, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        let rankedPlaces = myRankings.map { Place($0.ranking) }
         let places = searchResults ?? {
             let nearbyIDs = Set(nearbyPlaces.map(\.id))
             return nearbyPlaces + rankedPlaces.filter { !nearbyIDs.contains($0.id) }
@@ -95,7 +96,7 @@ struct SearchMapView: View {
         if let summary = selectedSummary {
             PlaceCardView(
                 summary: summary,
-                userLocation: locationManager.location,
+                userLocation: context.locationManager.location,
                 onOpen: { onOpen(summary) },
                 onRank: { onRank(summary) }
             )
@@ -112,19 +113,10 @@ struct SearchMapView: View {
         }
     }
 
-    private func loadRankings() async {
-        let scored = ScoreCurve.scored((try? await rankingStore.rankings()) ?? [])
-        rankedPlaces = scored.map { Place($0.ranking) }
-        rankingsByPlaceID = Dictionary(
-            scored.map { ($0.restaurant.mapItemID, $0) },
-            uniquingKeysWith: { first, _ in first }
-        )
-    }
-
     private func loadNearbyPlaces() async {
         // Zoomed far out, Apple's handful of results would look random, so keep the last ones
         guard searchResults == nil, region.span.latitudeDelta < 0.08 else { return }
-        if let places = try? await placeStore.places(in: region) {
+        if let places = try? await context.placeStore.places(in: region) {
             nearbyPlaces = places
         }
     }
@@ -133,7 +125,7 @@ struct SearchMapView: View {
         let trimmedQuery = query.trimmingCharacters(in: .whitespaces)
         guard !trimmedQuery.isEmpty else { return }
 
-        let results = (try? await placeStore.search(trimmedQuery, in: region)) ?? []
+        let results = (try? await context.placeStore.search(trimmedQuery, in: region)) ?? []
         searchResults = results
         selectedID = nil
         guard !results.isEmpty else { return }
@@ -164,9 +156,7 @@ extension MKCoordinateRegion {
 
 #Preview {
     SearchMapView(
-        placeStore: MapKitPlaceStore(),
-        rankingStore: SampleRankingStore(),
-        locationManager: CLLocationManager(),
+        context: AppContext(),
         onOpen: { _ in },
         onRank: { _ in }
     )

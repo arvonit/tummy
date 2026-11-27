@@ -11,6 +11,8 @@ import Testing
 
 struct ScoreCurveTests {
 
+    static let sampleUserID = UUID()
+
     @Test func inverseCDFMatchesKnownQuantiles() {
         #expect(abs(ScoreCurve.inverseNormalCDF(0.5)) < 1e-9)
         #expect(abs(ScoreCurve.inverseNormalCDF(0.975) - 1.959964) < 1e-5)
@@ -106,6 +108,20 @@ struct ScoreCurveTests {
         #expect(names == ["Apple Cafe", "Zucchini Bakery"])
     }
 
+    @Test func eachUsersListsAreScoredSeparately() {
+        let otherUser = UUID()
+        let rankings = [
+            makeRanking("Mine A", .like, position: 0),
+            makeRanking("Mine B", .like, position: 1),
+            makeRanking("Theirs", .like, position: 0, userID: otherUser),
+        ]
+
+        let theirs = ScoreCurve.scored(rankings).first { $0.ranking.userID == otherUser }
+        let mean = ScoreCurve.parameters(for: .like).mean
+
+        #expect(abs((theirs?.score ?? 0) - mean) < 1e-9)
+    }
+
     private func bucketScores(count: Int, bucket: Bucket) -> [Double] {
         (0..<count).map { ScoreCurve.score(position: $0, count: count, bucket: bucket) }
     }
@@ -118,7 +134,8 @@ struct ScoreCurveTests {
         _ name: String,
         _ bucket: Bucket,
         position: Int,
-        category: PlaceCategory = .restaurant
+        category: PlaceCategory = .restaurant,
+        userID: User.ID = Self.sampleUserID
     ) -> Ranking {
         let restaurant = Restaurant(
             id: UUID(),
@@ -131,6 +148,7 @@ struct ScoreCurveTests {
         )
         return Ranking(
             id: UUID(),
+            userID: userID,
             restaurant: restaurant,
             category: category,
             bucket: bucket,

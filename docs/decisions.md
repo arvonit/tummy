@@ -12,7 +12,7 @@ bottom, and mark any that are later reversed instead of deleting them.
 | 4 | Rank places only; dishes are tags on visits | Keeps the data model and comparisons small for v1 |
 | 5 | One ranking per user per place; revisits add visits and can re-rank | No duplicates in the list, and history is kept |
 | 6 | Visit fields: date, notes, dish tags, and up to 5 photos | Rich enough to be social without being heavy |
-| 7 | Comparison uses binary insertion with forced choice and no tie button | Matches Beli's behavior. A tie or skip option can be added later |
+| 7 | Comparison uses binary insertion with forced choice and no tie button. **Updated by plan 03:** a Skip button stops and inserts at the current comparison | Matches Beli's behavior. Skip is a way out when two places feel equal |
 | 8 | Apple MapKit for place search and data | Free, no API key, native. Our own UUIDs plus Apple's place ID for de-duplication |
 | 9 | Public by default, with an optional private account that requires approved follows | Beli-like discovery while still allowing privacy |
 | 10 | Four tabs (Feed, My Lists, Search, Profile) plus a modal rate flow | Rating is an action, not a destination |
@@ -27,3 +27,5 @@ bottom, and mark any that are later reversed instead of deleting them.
 | 19 | Screens get data from `*Store` protocols (e.g., `RankingStore`) with sample implementations first | Swap sample data, Supabase, and our own API without touching UI code |
 | 20 | Build one UI piece at a time against static sample data, each with its own plan | Each part is debuggable in isolation |
 | 21 | The category type is `PlaceCategory`, not `Category` | Foundation exposes an Objective-C `Category` type, which makes the name ambiguous |
+| 22 | Stores are `Observable` classes exposing loaded data as properties. UIKit screens read them in `updateProperties()`, SwiftUI views in `body` | Every tab updates after a change with no notification glue. A backend store keeps a cache of the same shape |
+| 23 | iPhone only (`TARGETED_DEVICE_FAMILY` = 1), no iPad layout | On Apple silicon Macs the app runs as "Designed for iPhone" in a phone-sized window instead of stretching to an iPad layout. An iPad layout can come later |

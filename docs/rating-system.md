@@ -57,17 +57,25 @@ Worked example, "like" bucket with `n = 10`:
 
 ## Comparison flow (binary insertion)
 
-This copies Beli's behavior: always a **forced choice** with no tie button.
+This copies Beli's behavior: a **forced choice** with no tie button, plus a Skip escape hatch.
 
-1. The user picks a bucket. If it's empty, the new place goes in as the only entry.
+1. The user picks a bucket on the details sheet and taps Rank. If the bucket is empty, the new
+   place goes in as the only entry.
 2. Binary search over the bucket's current order. Each step shows the new place next to the
    place at the midpoint and asks "Which did you like more?"
 3. The answer halves the search window. This repeats until the window is empty, so the exact
    insertion index is known. That takes about ⌈log₂(n + 1)⌉ questions (6 for a 50-place bucket).
 4. Insert at that index, then recompute scores for the whole bucket.
 
-Open question: Beli may have "Too tough" or "Skip" escape hatches. Leave them out for now.
-Adding them later only means inserting at the current midpoint and stopping.
+Revisiting a ranked place preselects its category and bucket. If neither changes and the user
+leaves **Re-rank** off, Rank only adds a visit. Otherwise the place is taken out of its list,
+compared again, and reinserted, keeping its ranking ID so earlier visits stay attached.
+
+The comparison has an **Undo** that steps back one answer. The last answer saves right away, so
+it can't be undone.
+
+**Skip**, next to Undo, stops the questions and inserts the new place just below the place it's
+being compared with, as if they tied.
 
 ## Storage
 

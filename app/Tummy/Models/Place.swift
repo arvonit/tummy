@@ -90,3 +90,21 @@ extension PlaceSummary {
         .map { PlaceSummary(place: Place($0.ranking), ranking: $0) }
 
 }
+
+extension Restaurant {
+
+    /// A restaurant for a place you're ranking for the first time. Apple Maps has no cuisine, and
+    /// its city stands in for the neighborhood.
+    init(_ place: Place) {
+        self.init(
+            id: UUID(),
+            mapItemID: place.id,
+            name: place.name,
+            cuisine: nil,
+            neighborhood: place.city,
+            latitude: place.coordinate.latitude,
+            longitude: place.coordinate.longitude
+        )
+    }
+
+}

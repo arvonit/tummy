@@ -45,16 +45,28 @@ Code style follows `~/Development/Archive/Schreiber`:
 
 ### Data access
 
-Screens never talk to a backend directly. Each domain gets a store protocol:
+Screens never talk to a backend directly. Each domain gets a store protocol. Stores are
+`Observable` classes that expose their loaded data as properties and change it through async
+methods:
 
 ```swift
-protocol RankingStore {
-    func rankings() async throws -> [Ranking]
+protocol RankingStore: AnyObject, Observable {
+    var rankings: [Ranking] { get }   // every user's
+    var visits: [Visit] { get }
+    func rank(_:category:bucket:at:by:visit:) async throws -> Ranking
+    func addVisit(_ visit: Visit) async throws
     func delete(_ id: Ranking.ID) async throws
 }
 ```
 
-- **Now**: `SampleRankingStore` keeps data in memory, loaded from bundled JSON.
+UIKit screens read stores in `updateProperties()` and SwiftUI views read them in `body`, so both
+redraw when the data changes. `UserStore` holds users and follows. `TabBarController` creates
+one `AppContext` (the ranking, user, and place stores plus a location manager) and passes it to
+every tab, so a change in one tab shows in the others. Feed items aren't stored: `FeedItem` builds
+them from visits, and a ranking's first visit reads "ranked".
+
+- **Now**: `SampleRankingStore` and `SampleUserStore` keep data in memory, loaded from bundled
+  JSON.
 - **Soon**: `SupabaseRankingStore` built on `supabase-swift`.
 - **Later**: an implementation that calls our own API in `services/api`, with no screen changes.
 

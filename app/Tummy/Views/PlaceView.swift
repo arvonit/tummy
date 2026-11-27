@@ -10,14 +10,16 @@ import SwiftUI
 
 /// The Place screen: a map header, the name and score, details, and quick actions
 struct PlaceView: View {
-    let summary: PlaceSummary
-    let placeStore: PlaceStore
-    let userLocation: CLLocation?
-    let onRank: () -> Void
+    let place: Place
+    let context: AppContext
+    let onRank: (PlaceSummary) -> Void
 
     /// Apple's full details, for the phone number, website, and directions
     @State private var mapItem: MKMapItem?
     @Environment(\.openURL) private var openURL
+
+    /// Recomputed from the store, so the score updates after ranking
+    private var summary: PlaceSummary { context.summary(for: place) }
 
     var body: some View {
         ScrollView {
@@ -34,7 +36,7 @@ struct PlaceView: View {
                         Text(summary.isRanked ? "Your score" : "Community score")
                             .foregroundStyle(.secondary)
                         Spacer()
-                        Button("Rank", systemImage: "plus.circle", action: onRank)
+                        Button("Rank", systemImage: "plus.circle") { onRank(summary) }
                             .labelStyle(.iconOnly)
                             .font(.largeTitle)
                             .tint(.primary)
@@ -42,7 +44,7 @@ struct PlaceView: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(summary.kind)
-                        Text(summary.areaAndDistance(from: userLocation))
+                        Text(summary.areaAndDistance(from: context.locationManager.location))
                             .foregroundStyle(.secondary)
                     }
 
@@ -54,7 +56,7 @@ struct PlaceView: View {
         // The map header runs up behind the navigation bar, like Apple Maps
         .ignoresSafeArea(edges: .top)
         .task {
-            mapItem = try? await placeStore.mapItem(for: summary.id)
+            mapItem = try? await context.placeStore.mapItem(for: summary.id)
         }
     }
 
@@ -104,10 +106,9 @@ struct PlaceView: View {
 #Preview {
     NavigationStack {
         PlaceView(
-            summary: PlaceSummary.samples[2],
-            placeStore: MapKitPlaceStore(),
-            userLocation: CLLocation(latitude: 40.7265, longitude: -73.9866),
-            onRank: {}
+            place: PlaceSummary.samples[2].place,
+            context: AppContext(),
+            onRank: { _ in }
         )
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {

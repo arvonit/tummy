@@ -1,0 +1,18 @@
+{
+  "currentUser": "arvonit",
+  "users": [
+    { "name": "Arvind Kasiliya", "handle": "arvonit", "memberSince": "2025-01-12T00:00:00Z" },
+    { "name": "Maya Chen", "handle": "mayaeats", "memberSince": "2024-06-03T00:00:00Z" },
+    { "name": "Jordan Brooks", "handle": "jbrooks", "memberSince": "2025-03-21T00:00:00Z" },
+    { "name": "Priya Raman", "handle": "priyar", "memberSince": "2024-11-09T00:00:00Z" },
+    { "name": "Leo Martins", "handle": "leom", "memberSince": "2025-07-30T00:00:00Z" },
+    { "name": "Sofia Alvarez", "handle": "sofiaa", "memberSince": "2024-02-14T00:00:00Z" },
+    { "name": "Sam Okafor", "handle": "samokafor", "memberSince": "2025-09-05T00:00:00Z" }
+  ],
+  "follows": [
+    ["arvonit", "mayaeats"], ["arvonit", "jbrooks"], ["arvonit", "priyar"],
+    ["arvonit", "leom"], ["arvonit", "sofiaa"], ["arvonit", "samokafor"],
+    ["mayaeats", "arvonit"], ["jbrooks", "arvonit"], ["priyar", "arvonit"], ["sofiaa", "arvonit"],
+    ["mayaeats", "priyar"], ["priyar", "mayaeats"], ["leom", "jbrooks"], ["sofiaa", "mayaeats"]
+  ]
+}

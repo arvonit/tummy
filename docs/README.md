@@ -21,9 +21,8 @@ debugged in isolation before any backend exists.
 2. **Search tab (full-screen map) + a minimal Restaurant detail screen** —
    [plans/02-search-map.md](plans/02-search-map.md). Built before the rate flow, so the map can
    start it.
-3. Comparison flow (binary insertion)
-4. Rate modal (bucket pick → compare → notes, dishes, photos)
-5. Restaurant detail (the rest: photos, all scores, and ratings breakdown)
-6. Feed
-7. Profile
-8. Supabase backend (auth, Postgres, storage) replaces the sample repositories
+3. **Rate flow (details sheet → comparisons → result), Feed, and Profile** —
+   [plans/03-feed-profile-rating.md](plans/03-feed-profile-rating.md). One plan covering what used
+   to be steps 3, 4, 6, and 7, since the Feed and Profile show what the rate flow creates.
+4. Restaurant detail (the rest: photos, all scores, ratings breakdown, and visit history)
+5. Supabase backend (auth, Postgres, storage) replaces the sample repositories

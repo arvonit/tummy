@@ -11,6 +11,7 @@ import Foundation
 /// bucket.
 nonisolated struct Ranking: Identifiable, Hashable {
     let id: UUID
+    let userID: User.ID
     let restaurant: Restaurant
     let category: PlaceCategory
     let bucket: Bucket

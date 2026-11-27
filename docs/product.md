@@ -4,7 +4,7 @@
 
 1. A user visits a place and opens the rate flow.
 2. They pick its category (see below) and a bucket: **Liked it**, **It was fine**, or
-   **Didn't like it**.
+   **Didn't like it**, and can add the visit's notes, dishes, photos, and date on the same sheet.
 3. They answer a few "Which did you like more?" comparisons against places already in that
    category's bucket, which inserts the new place into that ranked list.
 4. Every place's score is derived from its position on a bell curve (see
@@ -52,7 +52,8 @@ A `UITabBarController` with four tabs:
 | **Profile** | Your stats, score distribution, followers, and settings |
 
 **Rating** is a modal flow, not a tab. It starts from a restaurant (map pin, search result, or
-detail page) or from a `+` button in Feed and My Lists.
+detail page) or from a Feed item. A `+` button in Feed and My Lists, which needs a place picker,
+is deferred.
 
 ## Social model
 

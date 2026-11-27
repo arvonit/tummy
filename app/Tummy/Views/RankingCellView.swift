@@ -30,7 +30,7 @@ struct RankingCellView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(row.ranking.restaurant.name)
                     .font(.body.bold())
-                Text("\(row.ranking.restaurant.cuisine) · \(row.ranking.restaurant.neighborhood)")
+                Text(row.ranking.restaurant.details)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -62,6 +62,7 @@ struct RankingCellView: View {
     )
     let ranking = Ranking(
         id: UUID(),
+        userID: UUID(),
         restaurant: restaurant,
         category: .restaurant,
         bucket: .like,

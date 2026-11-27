@@ -40,7 +40,7 @@ in `docs/decisions.md`.
 | 11 | Top edge effect | Automatic (renders soft on iOS 27.2); hard | Hard | A solid bar with a dividing line, like GitHub | Review |
 | 12 | Rank numbers | Stored overall and bucket ranks; number the visible rows | Number the visible rows, best first | Works for any filter with no extra model fields | Build |
 | 13 | Equal scores in "All" | Leave order to the sort; break ties by name | Break ties by name | Deterministic order across reloads | Review |
-| 14 | Tapping a row | Tap and deselect; not selectable | Not selectable until the detail screen exists | Same result in less code | Build |
+| 14 | Tapping a row | Tap and deselect; not selectable | Not selectable until the detail screen exists (**superseded** by plan 03: rows push the Place screen) | Same result in less code | Build |
 | 15 | Model conformances | `Codable` everywhere now; only what's needed | Only `Bucket` and `PlaceCategory`, and only `Decodable` | Nothing encodes yet. Add `Codable` with the backend | Build |
 | 16 | Screen and tab name | My List; My Lists | My Lists (`MyListsViewController`) | The screen holds a separate ranked list per category | Review |
 

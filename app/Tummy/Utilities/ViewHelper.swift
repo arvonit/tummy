@@ -21,4 +21,20 @@ enum ViewHelper {
         }
     }
 
+    static func makeFeedCell(
+        onOpenUser: @escaping (User) -> Void,
+        onRank: @escaping (FeedItem) -> Void
+    ) -> UICollectionView.CellRegistration<UICollectionViewListCell, FeedItem> {
+        UICollectionView.CellRegistration<UICollectionViewListCell, FeedItem> {
+            cell, indexPath, item in
+            cell.contentConfiguration = UIHostingConfiguration {
+                FeedCellView(
+                    item: item,
+                    onOpenUser: { onOpenUser(item.user) },
+                    onRank: { onRank(item) }
+                )
+            }
+        }
+    }
+
 }
