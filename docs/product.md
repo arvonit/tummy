@@ -68,6 +68,23 @@ Restaurant search and metadata come from **Apple MapKit** (`MKLocalSearch` filte
 points of interest). It's free, needs no API key, and is native on iOS. Our database keeps its own
 `restaurants` table keyed by our own UUID and stores Apple's place identifier for de-duplication.
 
+## Importing from Beli
+
+Many new users will already have years of rankings in Beli, so Tummy can import them from a file.
+Beli has no public API or export button, so the user brings the file:
+
+- A CSV or JSON file in Tummy's own simple format: name, address, category, Beli score, notes,
+  and visit dates, listed in ranked order within each category.
+- People can make it with an unofficial exporter run on their own account (e.g., `beli-client`),
+  from a copy of their data requested from Beli, or by hand. A short guide explains each.
+- Tummy matches each row to a MapKit place and shows a review screen for rows it can't match.
+- The Beli score only picks the bucket. Within a bucket, Beli's order becomes the rank, and the
+  score comes from `ScoreCurve` like any other ranking. The bucket cutoffs are decided in the
+  import's plan.
+- Importing a place you've already ranked adds its visits and keeps your Tummy ranking.
+
+Tummy never asks for Beli credentials or calls Beli's servers (see [decisions.md](decisions.md)).
+
 ## Out of scope for v1
 
 - Leaderboards, want-to-try lists, and lists of places to try

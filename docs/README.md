@@ -26,3 +26,12 @@ debugged in isolation before any backend exists.
    to be steps 3, 4, 6, and 7, since the Feed and Profile show what the rate flow creates.
 4. Restaurant detail (the rest: photos, all scores, ratings breakdown, and visit history)
 5. Supabase backend (auth, Postgres, storage) replaces the sample repositories
+6. Social graph: people search, follow and unfollow, follower lists, and private accounts with
+   follow requests
+7. Settings and App Store readiness: a Settings screen (private account, sign out, and account
+   deletion), editing and deleting visits and rankings, reporting posts and blocking users, the app
+   icon, launch screen, and privacy manifest
+8. Import from Beli: rankings from a CSV or JSON file (see
+   [product.md](product.md#importing-from-beli))
+
+Steps 1–8 make the MVP, which ships to friends through TestFlight.
