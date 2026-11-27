@@ -6,4 +6,5 @@ score comes from its rank on a bell curve, so most places land around 7.5–8.5 
 rare. Unlike Beli, which spreads scores evenly, a high score means something, and Tummy is a native
 Swift app, so lists, maps, and transitions stay smooth.
 
-The iOS app lives in `app/`, and the design docs and build plans are in [docs/](docs/README.md).
+The iOS app lives in [`app/`](app/Tummy) and the design docs and build plans are in 
+[`docs/`](docs/README.md).
